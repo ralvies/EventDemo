@@ -29,7 +29,7 @@ namespace gx {
 class EventHandler: public Command
 {
 public:
-    typedef std::tr1::function< void () > Fn;
+    typedef std::function< void () > Fn;
 
     EventHandler( Fn &fn );
     ~EventHandler();

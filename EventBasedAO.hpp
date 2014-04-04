@@ -72,7 +72,7 @@ public:
 protected:
     // EventBasedAO interface
     template< class T >
-    void subscribe( std::tr1::function< void (T&) > const &callback );
+    void subscribe( std::function< void (T&) > const &callback );
 
     template< class T > void unsubscribe();
     void unsubscribeAll();
@@ -85,15 +85,16 @@ private:
     EventBindings m_bindings;
 
     template< class T >
-    static Command* bind( std::tr1::function< void (T&) > const &callback, Event &e );
+    static Command* bind( std::function< void (T&) > const &callback, Event &e );
 };
 
 //------------------------------------------------------------------------------
 template< class T >
-void EventBasedAO::subscribe( std::tr1::function< void (T&) > const &callback )
+void EventBasedAO::subscribe( std::function< void (T&) > const &callback )
 {
+    using namespace std::placeholders;
     unsigned int const id = TypeID< T >::id();
-    EventBindings::Binding b = std::tr1::bind( &bind< T >, callback, _1 );
+    EventBindings::Binding b = std::bind( &bind< T >, callback, _1 );
     m_bindings.registerBinding( id, b );
     EventMgr::instance().subscribe< T >( *this );
 }
@@ -109,10 +110,10 @@ void EventBasedAO::unsubscribe()
 
 //------------------------------------------------------------------------------
 template< class T >
-Command* EventBasedAO::bind( std::tr1::function< void (T&) > const &callback, Event &e )
+Command* EventBasedAO::bind( std::function< void (T&) > const &callback, Event &e )
 {
     T *pEvent = e.event< T >();
-    std::tr1::function< void () > fn = std::tr1::bind( callback, *pEvent );
+    std::function< void () > fn = std::bind( callback, *pEvent );
     return new EventHandler( fn );
 }
 

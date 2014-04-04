@@ -37,7 +37,7 @@ public:
     ~EventBindings();
 
     // EventBindings interface
-    typedef std::tr1::function< Command* (Event&) > Binding;
+    typedef std::function< Command* (Event&) > Binding;
 
     void registerBinding( unsigned int id, Binding &binding );
     void unregisterBinding( unsigned int id );

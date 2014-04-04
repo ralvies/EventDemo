@@ -30,8 +30,9 @@ using namespace gx;
 template< class T >
 void ConsumerAO::onEvent()
 {
-    std::tr1::function< void (T&) > const f =
-        std::tr1::bind( static_cast< void (ConsumerAdapter::*)( T& ) >( &ConsumerAdapter::consume ),
+    using namespace std::placeholders;
+    std::function< void (T&) > const f =
+        std::bind( static_cast< void (ConsumerAdapter::*)( T& ) >( &ConsumerAdapter::consume ),
                         &m_adapter, _1 );
     subscribe( f );
 }
@@ -60,7 +61,7 @@ void ConsumerAO::init()
     // Use this approach instead of the templatized onEvent() method if
     // Eclipse C/C++ gives you grief
     #define ON_EVENT( EventType ) \
-        do{ std::tr1::function< void (EventType&) > f = std::tr1::bind( static_cast< void (ConsumerAdapter::*)( EventType& ) >( &ConsumerAdapter::consume ), &m_adapter, _1 ); subscribe( f ); }while( 0 )
+        do{ std::function< void (EventType&) > f = std::bind( static_cast< void (ConsumerAdapter::*)( EventType& ) >( &ConsumerAdapter::consume ), &m_adapter, _1 ); subscribe( f ); }while( 0 )
 
     ON_EVENT( Hamburger );
     ON_EVENT( Coke );
