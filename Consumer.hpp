@@ -26,8 +26,8 @@ specific language governing permissions and limitations under the License.
 
 namespace gx {
 
-class Hamburger;
-class Coke;
+struct Hamburger;
+struct Coke;
 
 class Consumer
 {
