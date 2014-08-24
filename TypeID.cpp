@@ -22,13 +22,9 @@ specific language governing permissions and limitations under the License.
 
 using namespace gx;
 
-namespace
-{
-    unsigned int nextID = 0;
-}
-
 //------------------------------------------------------------------------------
 unsigned int TypeIDGenerator::generateID()
 {
+    static unsigned int nextID = 100;
     return nextID++;
 }

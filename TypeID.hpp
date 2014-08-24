@@ -23,22 +23,21 @@ specific language governing permissions and limitations under the License.
 
 namespace gx {
 
-template< class T >
-class TypeID
-{
-public:
-    static unsigned int id(){ return m_id; }
-
-private:
-    static unsigned int const m_id;
-};
-
 struct TypeIDGenerator
 {
     static unsigned int generateID();
 };
 
-template< class T > unsigned int const TypeID< T >::m_id = TypeIDGenerator::generateID();
+template< class T >
+class TypeID
+{
+public:
+    static unsigned int id()
+    {
+        static unsigned int const id = TypeIDGenerator::generateID();
+        return id;
+    }
+};
 
 } // End namespace
 
