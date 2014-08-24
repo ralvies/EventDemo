@@ -49,13 +49,16 @@ void EventMgr::unsubscribeAll( EventListener &l )
 {
     // Search observers
     for( EventListeners::iterator it = m_listeners.begin();
-         it != m_listeners.end();
-         ++it )
+         it != m_listeners.end(); )
     {
         // Remove the observer passed in as an argument
         if( it->second == &l )
         {
-            m_listeners.erase( it );
+            m_listeners.erase( it++ );
+        }
+        else
+        {
+            ++it;
         }
     }
 }
@@ -71,13 +74,16 @@ void EventMgr::removeListener( unsigned int id, EventListener &l )
 {
     // Search observers with the given key
     for( EventListeners::iterator it = m_listeners.lower_bound( id );
-         it != m_listeners.upper_bound( id );
-         ++it )
+         it != m_listeners.upper_bound( id ); )
     {
         // Remove the observer passed in as an argument
         if( it->second == &l )
         {
-            m_listeners.erase( it );
+            m_listeners.erase( it++ );
+        }
+        else
+        {
+            ++it;
         }
     }
 }
