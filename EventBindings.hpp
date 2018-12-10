@@ -39,7 +39,7 @@ public:
     // EventBindings interface
     typedef std::function< Command* (Event&) > Binding;
 
-    void registerBinding( unsigned int id, Binding &binding );
+    void registerBinding( unsigned int id, Binding binding );
     void unregisterBinding( unsigned int id );
 
     bool hasBinding( unsigned int id ) const;

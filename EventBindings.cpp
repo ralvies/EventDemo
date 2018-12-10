@@ -35,7 +35,7 @@ EventBindings::~EventBindings()
 }
 
 //------------------------------------------------------------------------------
-void EventBindings::registerBinding( unsigned int id, Binding &binding )
+void EventBindings::registerBinding( unsigned int id, Binding binding )
 {
     m_bindings[ id ] = binding;
 }

@@ -28,7 +28,6 @@ namespace gx {
 class Event
 {
 public:
-    Event(){}
     Event( unsigned int id, void *pEvent ):
     m_id( id ),
     m_pEvent( pEvent )

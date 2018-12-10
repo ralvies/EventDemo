@@ -26,19 +26,25 @@ specific language governing permissions and limitations under the License.
 
 namespace gx {
 
+template< class H >
 class EventHandler: public Command
 {
 public:
-    typedef std::function< void () > Fn;
+    EventHandler( H handler ):
+    m_handler( handler )
+    {
+    }
 
-    EventHandler( Fn &fn );
-    ~EventHandler();
+    ~EventHandler() = default;
 
     // Command interface
-    virtual void execute();
+    virtual void execute() override
+    {
+        m_handler();
+    }
 
 private:
-    Fn m_fn;
+    H m_handler;
 };
 
 } // End namespace

@@ -71,8 +71,8 @@ public:
 
 protected:
     // EventBasedAO interface
-    template< class T >
-    void subscribe( std::function< void (T&) > const &callback );
+    template< class E, class T >
+    void subscribe( T handler );
 
     template< class T > void unsubscribe();
     void unsubscribeAll();
@@ -83,20 +83,28 @@ private:
 
     CommandQueue m_queue;
     EventBindings m_bindings;
-
-    template< class T >
-    static Command* bind( std::function< void (T&) > const &callback, Event &e );
 };
 
 //------------------------------------------------------------------------------
-template< class T >
-void EventBasedAO::subscribe( std::function< void (T&) > const &callback )
+template< class E, class T >
+void EventBasedAO::subscribe( T handler )
 {
-    using namespace std::placeholders;
-    unsigned int const id = TypeID< T >::id();
-    EventBindings::Binding b = std::bind( &bind< T >, callback, _1 );
+    unsigned int const id = TypeID< E >::id();
+
+    auto b = [ handler = handler ]( Event &e )
+    {
+        E *pEvent = e.event< E >();
+
+        auto c = [ handler = handler, event = *pEvent ]() mutable
+        {
+            handler( event );
+        };
+
+        return new EventHandler( c );
+    };
+
     m_bindings.registerBinding( id, b );
-    EventMgr::instance().subscribe< T >( *this );
+    EventMgr::instance().subscribe< E >( *this );
 }
 
 //------------------------------------------------------------------------------
@@ -106,15 +114,6 @@ void EventBasedAO::unsubscribe()
     unsigned int const id = TypeID< T >::id();
     EventMgr::instance().unsubscribe< T >( *this );
     m_bindings.unregisterBinding( id );
-}
-
-//------------------------------------------------------------------------------
-template< class T >
-Command* EventBasedAO::bind( std::function< void (T&) > const &callback, Event &e )
-{
-    T *pEvent = e.event< T >();
-    std::function< void () > fn = std::bind( callback, *pEvent );
-    return new EventHandler( fn );
 }
 
 } // End namespace

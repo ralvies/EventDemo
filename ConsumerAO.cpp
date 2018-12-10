@@ -27,14 +27,15 @@ using namespace gx;
 
 //------------------------------------------------------------------------------
 // inline
-template< class T >
+template< class E >
 void ConsumerAO::onEvent()
 {
-    using namespace std::placeholders;
-    std::function< void (T&) > const f =
-        std::bind( static_cast< void (ConsumerAdapter::*)( T& ) >( &ConsumerAdapter::consume ),
-                        &m_adapter, _1 );
-    subscribe( f );
+    auto handler = [ &adapter = m_adapter ]( E &event ) mutable
+    {
+        adapter.consume( event );
+    };
+
+    subscribe< E >( handler );
 }
 
 //------------------------------------------------------------------------------
@@ -57,18 +58,6 @@ ConsumerAO::~ConsumerAO()
 // virtual
 void ConsumerAO::init()
 {
-#if ECLIPSE_GIVES_ME_GRIEF
-    // Use this approach instead of the templatized onEvent() method if
-    // Eclipse C/C++ gives you grief
-    #define ON_EVENT( EventType ) \
-        do{ std::function< void (EventType&) > f = std::bind( static_cast< void (ConsumerAdapter::*)( EventType& ) >( &ConsumerAdapter::consume ), &m_adapter, _1 ); subscribe( f ); }while( 0 )
-
-    ON_EVENT( Hamburger );
-    ON_EVENT( Coke );
-
-    #undef ON_EVENT
-#endif
-
     onEvent< Hamburger >();
     onEvent< Coke >();
 }
